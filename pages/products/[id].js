@@ -3,13 +3,14 @@ import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import Head from 'next/head'
 import Image from 'next/image';
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Thumbs } from 'swiper';
-import 'swiper/css';
+import { Swiper, SwiperSlide } from "swiper/react"
+import { Thumbs } from 'swiper'
+import 'swiper/css'
 
 import Container from '../../components/container'
 import Header from '../../components/header'
 import Layout from '../../components/layout'
+import PostBody from '../../components/post-body'
 import PostTitle from '../../components/post-title'
 import SectionSeparator from '../../components/section-separator'
 
@@ -40,9 +41,9 @@ export default function Product({product, preview}) {
                 </title>
                 <meta property="og:image" content={product?.productImagesCollection?.items[0]?.url} />
               </Head>
-              <div className="grid-cols-1 lg:grid-cols-2">
+              <div className="grid grid-cols-1 lg:grid-cols-2">
                 {productImages ? (
-                  <>
+                  <div className="col-span-1">
                     <Swiper
                       modules={[Thumbs]}
                       thumbs={{ swiper: thumbsSwiper }}
@@ -63,32 +64,50 @@ export default function Product({product, preview}) {
                         </SwiperSlide>
                       ))}
                     </Swiper>
-                    
-                    {/* Thumbnails */}
+
                     <Swiper
-                    modules={[Thumbs]}
-                    watchSlidesProgress
-                    onSwiper={setThumbsSwiper}
-                    slidesPerView={6}
-                  >
-                    {productImages.map( ({description, fileName, url, height, width}) => (
-                      <SwiperSlide>
-                        <Image 
-                          loader={() => url}
-                          src={fileName}
-                          width={width}
-                          height={height}
-                          alt={description}
-                        />
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </>
+                      modules={[Thumbs]}
+                      watchSlidesProgress
+                      onSwiper={setThumbsSwiper}
+                      slidesPerView={6}
+                    >
+                      {productImages.map( ({description, fileName, url, height, width}) => (
+                        <SwiperSlide>
+                          <Image 
+                            loader={() => url}
+                            src={fileName}
+                            width={width}
+                            height={height}
+                            alt={description}
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
                 ) : null}
-                <h1 className="text-2xl">{product.name}</h1>
+                <div className="col-span-1">
+                  <h1 className="text-2xl my-3">{product.name}</h1>
+                  <p className="text-2xl my-3">${product?.price?.toFixed(2)}</p>
+                  <div className="flex my-6">
+                    <label className="flex items-center border px-2 mr-4">
+                      Qty
+                      <select className="px-1 ml-2">
+                        <option value="1">1</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                      </select>
+                    </label>
+                    <button className="w-full bg-red-700 hover:bg-red-800 text-white px-6 py-3 transition-all">
+                      Add to cart
+                    </button>
+                  </div>
+                </div>
               </div>
             </article>
             <SectionSeparator />
+            <article>
+            <PostBody content={product.description} />
+            </article>
           </>
         )}
       </Container>
@@ -98,11 +117,12 @@ export default function Product({product, preview}) {
 
 export async function getServerSideProps({ params, preview = false }) {
   const data = await getProductByProductId(params.id, preview)
+  const price = Math.floor(Math.random() * 100);
 
   return {
     props: {
       preview,
-      product: data ?? null
+      product: data ? {...data, price} : null
     },
   }
 }
