@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import Head from 'next/head'
 import Image from 'next/image';
+import Link from 'next/link'
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Thumbs } from 'swiper'
 import 'swiper/css'
@@ -12,6 +13,7 @@ import Header from '../../components/header'
 import Layout from '../../components/layout'
 import PostBody from '../../components/post-body'
 import PostTitle from '../../components/post-title'
+import ProductCard from '../../components/ProductCard'
 import SectionSeparator from '../../components/section-separator'
 
 import { getProductByProductId } from '../../lib/productApi'
@@ -85,29 +87,15 @@ export default function Product({product, preview}) {
                     </Swiper>
                   </div>
                 ) : null}
-                <div className="col-span-1">
-                  <h1 className="text-2xl my-3">{product.name}</h1>
-                  <p className="text-2xl my-3">${product?.price?.toFixed(2)}</p>
-                  <div className="flex my-6">
-                    <label className="flex items-center border px-2 mr-4">
-                      Qty
-                      <select className="px-1 ml-2">
-                        <option value="1">1</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                      </select>
-                    </label>
-                    <button className="w-full bg-red-700 hover:bg-red-800 text-white px-6 py-3 transition-all">
-                      Add to cart
-                    </button>
-                  </div>
-                </div>
+                <BuyBox name={product.name} price={product.price} />
               </div>
             </article>
             <SectionSeparator />
             <article>
             <PostBody content={product.description} />
             </article>
+            <SectionSeparator />
+            <RelatedProducts products={product?.recommendedProductsCollection?.items} />
           </>
         )}
       </Container>
@@ -125,4 +113,41 @@ export async function getServerSideProps({ params, preview = false }) {
       product: data ? {...data, price} : null
     },
   }
+}
+
+const BuyBox = ({name, price}) => (
+  <div className="col-span-1">
+    <h1 className="text-2xl my-3">{name}</h1>
+    <p className="text-2xl my-3">${price?.toFixed(2)}</p>
+    <div className="flex my-6">
+      <label className="flex items-center border px-2 mr-4">
+        Qty
+        <select className="px-1 ml-2">
+          <option value="1">1</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+        </select>
+      </label>
+      <button className="w-full bg-red-700 hover:bg-red-800 text-white px-6 py-3 transition-all">
+        Add to cart
+      </button>
+    </div>
+  </div>
+)
+
+const RelatedProducts = ({products}) => {
+  return (
+    <>
+      <h2 className="text-2xl my-3">Related Products</h2>
+      <Swiper
+        slidesPerView={4}
+      >
+        {products.map( (product, index) => (
+          <SwiperSlide key={`recommended-product-${index}`}>
+            <ProductCard product={product} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </>
+  )
 }
