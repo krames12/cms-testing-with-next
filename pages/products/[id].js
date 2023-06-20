@@ -8,9 +8,6 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { Thumbs } from 'swiper'
 import 'swiper/css'
 
-import Container from '../../components/container'
-import Header from '../../components/header'
-import Layout from '../../components/layout'
 import PostBody from '../../components/post-body'
 import PostTitle from '../../components/post-title'
 import ProductCard from '../../components/ProductCard'
@@ -28,78 +25,74 @@ export default function Product({product, preview}) {
     return <ErrorPage statusCode={404} />
   }
 
-  return (
-    <Layout preview={preview}>
-      <Container>
-        <Header />
-        {router.isFallback ? (
-          <PostTitle>Loading…</PostTitle>
-        ) : (
-          <>
-            <article>
-              <Head>
-                <title>
-                  {`${product.name}`}
-                </title>
-                <meta property="og:image" content={product?.productImagesCollection?.items[0]?.url} />
-              </Head>
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                {productImages ? (
-                  <div className="col-span-1">
-                    <Swiper
-                      modules={[Thumbs]}
-                      thumbs={{ swiper: thumbsSwiper }}
-                      spaceBetween={50}
-                      slidesPerView={1}
-                      onSlideChange={() => console.log('slide change')}
-                      onSwiper={(swiper) => console.log(swiper)}
-                    >
-                      {productImages.map( ({description, fileName, url, height, width}) => (
-                        <SwiperSlide>
-                          <Image 
-                            loader={() => url}
-                            src={fileName}
-                            width={width}
-                            height={height}
-                            alt={description}
-                          />
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
+  return router.isFallback ?  (
+    <PostTitle>Loading…</PostTitle>
+  ) : (
+    <div className="px-14 py-10">
+      <article>
+        <Head>
+          <title>
+            {`${product.name}`}
+          </title>
+          <meta property="og:image" content={product?.productImagesCollection?.items[0]?.url} />
+        </Head>
+        <Link href='/products' className="text-gray-500">
+          // All Products
+        </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-2 mt-6">
+          {productImages ? (
+            <div className="col-span-1">
+              <Swiper
+                modules={[Thumbs]}
+                thumbs={{ swiper: thumbsSwiper }}
+                spaceBetween={50}
+                slidesPerView={1}
+                onSlideChange={() => console.log('slide change')}
+                onSwiper={(swiper) => console.log(swiper)}
+              >
+                {productImages.map( ({description, fileName, url, height, width}) => (
+                  <SwiperSlide>
+                    <Image 
+                      loader={() => url}
+                      src={fileName}
+                      width={width}
+                      height={height}
+                      alt={description}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
 
-                    <Swiper
-                      modules={[Thumbs]}
-                      watchSlidesProgress
-                      onSwiper={setThumbsSwiper}
-                      slidesPerView={6}
-                    >
-                      {productImages.map( ({description, fileName, url, height, width}) => (
-                        <SwiperSlide>
-                          <Image 
-                            loader={() => url}
-                            src={fileName}
-                            width={width}
-                            height={height}
-                            alt={description}
-                          />
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
-                  </div>
-                ) : null}
-                <BuyBox name={product.name} price={product.price} />
-              </div>
-            </article>
-            <SectionSeparator />
-            <article>
-            <PostBody content={product.description} />
-            </article>
-            <SectionSeparator />
-            <RelatedProducts products={product?.recommendedProductsCollection?.items} />
-          </>
-        )}
-      </Container>
-    </Layout>
+              <Swiper
+                modules={[Thumbs]}
+                watchSlidesProgress
+                onSwiper={setThumbsSwiper}
+                slidesPerView={6}
+              >
+                {productImages.map( ({description, fileName, url, height, width}) => (
+                  <SwiperSlide>
+                    <Image 
+                      loader={() => url}
+                      src={fileName}
+                      width={width}
+                      height={height}
+                      alt={description}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          ) : null}
+          <BuyBox name={product.name} price={product.price} />
+        </div>
+      </article>
+      <SectionSeparator />
+      <article>
+      <PostBody content={product.description} />
+      </article>
+      <SectionSeparator />
+      <RelatedProducts products={product?.recommendedProductsCollection?.items} />
+    </div>
   )
 }
 
