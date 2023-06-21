@@ -146,6 +146,20 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@storyblok/js@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@storyblok/js/-/js-2.2.0.tgz#1b91fd52e1284ca1775814150746943a746cdd09"
+  integrity sha512-avEqvNko+ezsedam4IYPfTGvrrGKw1Z8gTKQUrVbSpp2f0Fmc6vpV3OzWyI4Aq8AYgAObB6Prc+P+wBAXZ8v2g==
+  dependencies:
+    storyblok-js-client "^5.10.6"
+
+"@storyblok/react@^2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@storyblok/react/-/react-2.1.5.tgz#cb968458aaf3643a26de0f8bc633fa6e76885012"
+  integrity sha512-HQAQ6u6jX4sknzWQ94GRH9INJK+oHWILHpUMqccR1fyGt9u5ac3bbVQiPf7tFu68Hhs/rNDr+7A1ER/1lHkFTA==
+  dependencies:
+    "@storyblok/js" "^2.2.0"
+
 "@swc/helpers@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.1.tgz#e9031491aa3f26bfcc974a67f48bd456c8a5357a"
@@ -1591,6 +1605,11 @@ ssr-window@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/ssr-window/-/ssr-window-4.0.2.tgz#dc6b3ee37be86ac0e3ddc60030f7b3bc9b8553be"
   integrity sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==
+
+storyblok-js-client@^5.10.6:
+  version "5.10.6"
+  resolved "https://registry.yarnpkg.com/storyblok-js-client/-/storyblok-js-client-5.10.6.tgz#df4f2fdff45e6de5874a6e1c19b6c1b062ce556f"
+  integrity sha512-rnUWMom9ePxUIbZ0mhnGePtd6agO4jmDDd9UVbeRehMTrfUKsDcpqOfTHO6zy7aq7SMaQqMB+22JCYzYbsZDuw==
 
 streamsearch@^1.1.0:
   version "1.1.0"
