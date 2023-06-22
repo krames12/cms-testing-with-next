@@ -4,9 +4,10 @@ import Link from 'next/link'
 export default function ProductCard({product, quickBuy = false}) {
   const {name, price, productId, productImagesCollection} = product
   const firstImage = productImagesCollection?.items[0];
+  const slug = slugify(name)
 
   return (
-    <Link href={`/products/${productId}`} className="flex flex-wrap p-4 m-2 rounded-lg bg-white hover:shadow-md border border-white hover:border-gray-100 transition-all">
+    <Link href={`/products/${slug}`} className="flex flex-wrap p-4 m-2 rounded-lg bg-white hover:shadow-md border border-white hover:border-gray-100 transition-all">
       <>
         <Image
           loader={() => firstImage.url}
@@ -28,3 +29,11 @@ export default function ProductCard({product, quickBuy = false}) {
     </Link>
   )
 }
+
+const slugify = str =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');

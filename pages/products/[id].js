@@ -8,18 +8,24 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { Thumbs } from 'swiper'
 import 'swiper/css'
 
-import PostBody from '../../components/post-body'
+import { StoryblokComponent, useStoryblokState } from "@storyblok/react"
+
 import PostTitle from '../../components/post-title'
 import ProductCard from '../../components/ProductCard'
 import SectionSeparator from '../../components/section-separator'
 
-import { getProductByProductId } from '../../lib/productApi'
+import { getProductBySlug } from '../../lib/productApi'
 
 export default function Product({product, preview}) {
   const router = useRouter()
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  product = useStoryblokState(product);
 
-  const productImages = product?.productImagesCollection?.items ?? [];
+  const {name, content} = product.story;
+
+  console.log(content);
+
+  // const productImages = product?.productImagesCollection?.items ?? [];
 
   if (!router.isFallback && !product) {
     return <ErrorPage statusCode={404} />
@@ -32,15 +38,15 @@ export default function Product({product, preview}) {
       <article>
         <Head>
           <title>
-            {`${product.name}`}
+            {`${name}`}
           </title>
-          <meta property="og:image" content={product?.productImagesCollection?.items[0]?.url} />
+          <meta property="og:image" content={content?.images[0]?.filename} />
         </Head>
         <Link href='/products' className="text-gray-500">
           // All Products
         </Link>
         <div className="grid grid-cols-1 lg:grid-cols-2 mt-6">
-          {productImages ? (
+          {content?.images ? (
             <div className="col-span-1">
               <Swiper
                 modules={[Thumbs]}
@@ -50,14 +56,14 @@ export default function Product({product, preview}) {
                 onSlideChange={() => console.log('slide change')}
                 onSwiper={(swiper) => console.log(swiper)}
               >
-                {productImages.map( ({description, fileName, url, height, width}) => (
+                {content.images.map( ({alt, filename}) => (
                   <SwiperSlide>
                     <Image 
-                      loader={() => url}
-                      src={fileName}
-                      width={width}
-                      height={height}
-                      alt={description}
+                      loader={() => filename}
+                      src={filename}
+                      width="750"
+                      height="750"
+                      alt={alt}
                     />
                   </SwiperSlide>
                 ))}
@@ -69,26 +75,26 @@ export default function Product({product, preview}) {
                 onSwiper={setThumbsSwiper}
                 slidesPerView={6}
               >
-                {productImages.map( ({description, fileName, url, height, width}) => (
+                {content.images.map( ({alt, filename}) => (
                   <SwiperSlide>
                     <Image 
-                      loader={() => url}
-                      src={fileName}
-                      width={width}
-                      height={height}
-                      alt={description}
+                      loader={() => filename}
+                      src={filename}
+                      width="750"
+                      height="750"
+                      alt={alt}
                     />
                   </SwiperSlide>
                 ))}
               </Swiper>
             </div>
           ) : null}
-          <BuyBox name={product.name} price={product.price} />
+          <BuyBox name={name} price={product.price} />
         </div>
       </article>
       <SectionSeparator />
       <article>
-      <PostBody content={product.description} />
+      <p>{content.description}</p>
       </article>
       <SectionSeparator />
       <RelatedProducts products={product?.recommendedProductsCollection?.items} />
@@ -96,15 +102,23 @@ export default function Product({product, preview}) {
   )
 }
 
-export async function getServerSideProps({ params, preview = false }) {
-  const data = await getProductByProductId(params.id, preview)
-  const price = Math.floor(Math.random() * 100);
+export async function getServerSideProps({ params, preview = false, query }) {
+  // const data = await getProductByProductId(params.id, preview)
+  // const price = Math.floor(Math.random() * 100);
+
+  // return {
+  //   props: {
+  //     preview,
+  //     product: data ? {...data, price} : null
+  //   },
+  // }
+
+  const data = await getProductBySlug(params.id, query);
 
   return {
     props: {
-      preview,
-      product: data ? {...data, price} : null
-    },
+      product: data ?? null,
+    }
   }
 }
 
@@ -135,7 +149,7 @@ const RelatedProducts = ({products}) => {
       <Swiper
         slidesPerView={4}
       >
-        {products.map( (product, index) => (
+        {products?.map( (product, index) => (
           <SwiperSlide key={`recommended-product-${index}`}>
             <ProductCard product={product} />
           </SwiperSlide>
